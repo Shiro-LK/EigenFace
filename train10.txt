@@ -1,0 +1,10 @@
+orl_faces_jpg/s1/1.jpg 0
+orl_faces_jpg/s10/1.jpg 1
+orl_faces_jpg/s11/1.jpg 2
+orl_faces_jpg/s12/1.jpg 3
+orl_faces_jpg/s13/1.jpg 4
+orl_faces_jpg/s14/1.jpg 5
+orl_faces_jpg/s15/1.jpg 6
+orl_faces_jpg/s16/1.jpg 7
+orl_faces_jpg/s17/1.jpg 8
+orl_faces_jpg/s18/1.jpg 9

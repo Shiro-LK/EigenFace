@@ -7,12 +7,13 @@ Created on Thu Nov  9 11:11:04 2017
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
-
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
 class Face_Recognition():
     def __init__(self):
         self.width = 0
         self.height = 0
-        
+        self.mod = 0
        
     def load_data_from_file(self, file):
         '''
@@ -166,7 +167,7 @@ class Face_Recognition():
             #images.append(self.display_eigenface(number_images, i)) cv2.cvtColor(gray,cv2.COLOR_GRAY2RGB)
             img = self.display_eigenface(number_images, i) #cv2.cvtColor(self.display_eigenface(number_images, i).astype(np.float32),cv2.COLOR_GRAY2RGB)#
             fig= plt.subplot(n, 5, i)
-            plt.subplots_adjust(hspace = .001)
+            plt.subplots_adjust(hspace = .1)
 
             fig.axes.get_xaxis().set_visible(False)
             fig.axes.get_yaxis().set_visible(False)
@@ -186,12 +187,32 @@ class Face_Recognition():
             print((u*w).sum(axis=1).shape)
             img = (u*w).sum(axis=1).reshape(-1,1) + self.average
             return cv2.convertScaleAbs(img.reshape(112,92))
-            
+      
+    # -- Apprentissage -- #
+    def fit(self, K):
+       self.mod = SVC(C=0.1, kernel='linear')
+       self.mod.fit(np.transpose(self.W[:K, :]), self.y)
+       
+    def predict_modele(self, X, Y, K):
+        
+        w_test = self.compute_weights_test(X, K)
+        preds = self.mod.predict(np.transpose(w_test[:K, :]))
+        res = accuracy_score(preds, Y)
+        return res, preds
+        
+        
 def __main__():
     mod = Face_Recognition()
+    k = 10
     X_train, Y_train = mod.load_data_from_file('train10.txt')
     X_test, Y_test = mod.load_data_from_file('test10.txt')
     mod.PCA(X_train, Y_train)
-    print(mod.evaluate(X_test, Y_test, K = 9 ))
-    mod.display_all_eigenfaces(0, 10)
+    print(mod.evaluate(X_test, Y_test, K = k ))
+    #mod.display_all_eigenfaces(0, 20)
+    mod.fit(K = k)
+    res, preds = mod.predict_modele(X_train, Y_train, k)
+    print('accuracy SVM train: ', res)
+    res, preds = mod.predict_modele(X_test, Y_test, k)
+    print('accuracy SVM test: ', res)
+    print(preds)
 __main__()
